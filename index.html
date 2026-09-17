@@ -41,29 +41,26 @@
     </div>
 
     <script>
-        const scriptUrl = 'https://script.google.com/macros/s/AKfycbwv8qy7dM9ze7NswA6_IUSoSBMTND3k7dmm16YGHyR7tg8RYx_1sklf9tikZeZyVFUS/exec'; // ضع رابط جوجل شيت هنا
+        const scriptUrl = 'https://script.google.com/macros/s/AKfycbwv8qy7dM9ze7NswA6_IUSoSBMTND3k7dmm16YGHyR7tg8RYx_1sklf9tikZeZyVFUS/exec';
 
-        document.getElementById('bookingForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const bookingData = {
-                action: "book",
-                name: document.getElementById('patientName').value,
-                phone: document.getElementById('patientPhone').value,
-                date: document.getElementById('bookingDate').value,
-                time: document.getElementById('bookingTime').value
-            };
+document.getElementById('bookingForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    // تحويل البيانات لشكل يسهل على جوجل شيت استقباله دون قيود الحماية
+    const name = document.getElementById('patientName').value;
+    const phone = document.getElementById('patientPhone').value;
+    const date = document.getElementById('bookingDate').value;
+    const time = document.getElementById('bookingTime').value;
 
-            fetch(scriptUrl, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(bookingData)
-            }).then(() => {
-                alert('✨ تم إرسال حجزك بنجاح وتسجيله في الجوجل شيت وجاري تنبيه الطبيب!');
-                document.getElementById('bookingForm').reset();
-            }).catch(err => alert('خطأ في الاتصال بالسيرفر'));
-        });
+    // استخدام الرابط المباشر بالإرسال لتفادي مشاكل الـ CORS
+    fetch(`${scriptUrl}?action=book&name=${encodeURIComponent(name)}&phone=${encodeURIComponent(phone)}&date=${encodeURIComponent(date)}&time=${encodeURIComponent(time)}`, {
+        method: 'GET' // تحويلها لـ GET لتخطي حظر المتصفحات على جيت هب
+    }).then(() => {
+        alert('✨ تم إرسال حجزك بنجاح وتسجيله في الجوجل شيت!');
+        document.getElementById('bookingForm').reset();
+    }).catch(err => alert('خطأ في الاتصال بالسيرفر'));
+});
+
     </script>
 </body>
 </html>
